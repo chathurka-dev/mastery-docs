@@ -711,7 +711,7 @@ function JitTab() {
                       <span className="text-xs font-mono font-semibold text-slate-800 dark:text-slate-200 flex-1">
                         {step}
                       </span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400 italic">// {note}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 italic">{"// "}{note}</span>
                     </li>
                   );
                 })}
@@ -1126,7 +1126,7 @@ function JitTab() {
                 Step 4 — Reading the results
               </p>
               <div className="rounded-lg bg-slate-800 dark:bg-slate-900 border border-slate-700 p-3 font-mono text-xs overflow-x-auto mb-3">
-                <div className="text-slate-500 mb-2">// BenchmarkDotNet output</div>
+                <div className="text-slate-500 mb-2">{"// BenchmarkDotNet output"}</div>
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="border-b border-slate-700">

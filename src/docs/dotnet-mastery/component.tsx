@@ -109,29 +109,6 @@ function CodeBlock({ code, label }: { code: string; label?: string }) {
   );
 }
 
-function Note({ accent, children }: { accent: AccentKey; children: React.ReactNode }) {
-  const a = ACCENT[accent];
-  return (
-    <div className={cn("border-l-4 rounded-r-lg px-4 py-3 my-4", a.calloutBorder, a.calloutBg)}>
-      <span className={cn("text-xs font-bold uppercase tracking-wide mr-2", a.calloutLabel)}>Key idea</span>
-      <span className="text-sm text-slate-700 dark:text-slate-300">{children}</span>
-    </div>
-  );
-}
-
-function H2({ num, title, accent }: { num: string; title: string; accent: AccentKey }) {
-  const a = ACCENT[accent];
-  return (
-    <div className="flex items-start gap-3 mt-8 mb-3">
-      <span className={cn("font-mono text-xs px-2 py-1 rounded font-bold shrink-0 mt-0.5", a.badge)}>{num}</span>
-      <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 leading-snug">{title}</h2>
-    </div>
-  );
-}
-
-function H3({ children }: { children: React.ReactNode }) {
-  return <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-5 mb-2">{children}</h3>;
-}
 
 function P({ children }: { children: React.ReactNode }) {
   return <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3">{children}</p>;
