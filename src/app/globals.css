@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+/* Enable class-based dark mode via data-theme attribute */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --color-primary: #7c3aed;
+  --color-primary-light: #ede9fe;
+  --color-primary-dark: #5b21b6;
+  --color-secondary: #4f46e5;
+
+  --color-category-languages: #7c3aed;
+  --color-category-backend: #6366f1;
+  --color-category-frontend: #0ea5e9;
+  --color-category-devops: #10b981;
+  --color-category-cs: #f59e0b;
+  --color-category-databases: #f43f5e;
+  --color-category-security: #ef4444;
+  --color-category-system: #8b5cf6;
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "Fira Code", monospace;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  /* Light theme defaults */
+  body {
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Dark theme overrides */
+  [data-theme="dark"] body {
+    background-color: #0f172a;
+    color: #f1f5f9;
+  }
+
+  /* Universal focus-visible baseline — only shown for keyboard nav */
+  :where(a, button, [role="button"], [role="tab"], [role="option"], summary):focus-visible {
+    outline: 2px solid #7c3aed;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+  [data-theme="dark"] ::-webkit-scrollbar-thumb { background: #334155; }
+  [data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #475569; }
+}
+
+@layer components {
+  /* Theme-aware toast styling for react-hot-toast */
+  .toast-themed {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    font-size: 14px !important;
+    font-family: var(--font-sans) !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+  }
+  [data-theme="dark"] .toast-themed {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+    border-color: #334155 !important;
+  }
+
+  /* Visually hidden until focused — for skip-link */
+  .skip-link {
+    position: absolute;
+    left: 0.5rem;
+    top: 0.5rem;
+    z-index: 100;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background: #7c3aed;
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transform: translateY(-150%);
+    transition: transform 0.15s ease;
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .gradient-brand {
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  [data-theme="dark"] .glass {
+    background: rgba(15, 23, 42, 0.8);
+  }
+
+  .card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(124, 58, 237, 0.12);
+  }
+}
