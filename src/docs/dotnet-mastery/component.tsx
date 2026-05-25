@@ -2760,6 +2760,7 @@ export default function DotNetMasteryGuide() {
             role="tab"
             aria-selected={i === active}
             onClick={() => setActive(i)}
+            suppressHydrationWarning
             className={cn(
               "shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap",
               i === active

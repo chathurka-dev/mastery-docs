@@ -22,10 +22,13 @@ import { meta as dotnetMeta } from "./dotnet-internals/meta";
 import DotNetComponent from "./dotnet-internals/component";
 import { meta as dotnetMasteryMeta } from "./dotnet-mastery/meta";
 import DotNetMasteryGuide from "./dotnet-mastery/component";
+import { meta as projectWalkthroughMeta } from "./project-walkthrough/meta";
+import ProjectWalkthrough from "./project-walkthrough/component";
 
 const registry: DocEntry[] = [
   { meta: dotnetMeta, component: DotNetComponent },
   { meta: dotnetMasteryMeta, component: DotNetMasteryGuide },
+  { meta: projectWalkthroughMeta, component: ProjectWalkthrough },
 ];
 
 export function getAllDocs(): DocMeta[] {

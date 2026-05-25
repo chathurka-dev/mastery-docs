@@ -182,6 +182,7 @@ export function Header({ docs, onMenuToggle, menuOpen }: HeaderProps) {
             onClick={() => setShowProfile((v) => !v)}
             aria-haspopup="menu"
             aria-expanded={showProfile}
+            suppressHydrationWarning
             className="flex items-center gap-2 rounded-xl px-2 py-1.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
           >
             <div className="flex h-7 w-7 items-center justify-center rounded-full gradient-brand text-white text-xs font-bold">

@@ -258,6 +258,7 @@ function Tabs({ tab, setTab }: { tab: TabId; setTab: (t: TabId) => void }) {
             tabIndex={active ? 0 : -1}
             onClick={() => setTab(id)}
             onKeyDown={(e) => onKeyDown(e, idx)}
+            suppressHydrationWarning
             className={cn(
               "flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500",
