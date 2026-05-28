@@ -2,19 +2,15 @@
 
 import { useState, useRef } from "react";
 import {
-  Lightbulb,
   Package,
   BarChart3,
   ArrowRight,
   Layers,
-  Zap,
   Shield,
   GitBranch,
   Boxes,
   Wrench,
   AlertTriangle,
-  CheckCircle2,
-  RefreshCw,
   Network,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

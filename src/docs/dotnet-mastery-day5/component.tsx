@@ -2,9 +2,7 @@
 
 import { useState, useRef } from "react";
 import {
-  Lightbulb,
   Package,
-  BarChart3,
   ArrowRight,
   Zap,
   AlertTriangle,

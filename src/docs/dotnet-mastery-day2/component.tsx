@@ -4,7 +4,6 @@ import { useState, useRef } from "react";
 import {
   Lightbulb,
   Package,
-  BarChart3,
   Layers,
   ArrowRight,
   Zap,

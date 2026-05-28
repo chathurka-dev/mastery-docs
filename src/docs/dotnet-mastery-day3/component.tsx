@@ -2,7 +2,6 @@
 
 import { useState, useRef } from "react";
 import {
-  Lightbulb,
   Package,
   BarChart3,
   ArrowRight,
@@ -437,7 +436,7 @@ function BulkOps() {
         <div className="pl-4 text-emerald-400">{".ExecuteDeleteAsync();"}</div>
       </div>
       <Callout tone="amber" icon={AlertTriangle} title="No cascade, no interceptors">
-        ExecuteUpdate/Delete bypass EF's change tracking pipeline — cascade deletes, interceptors, and domain events do not fire. Use raw SQL for bulk ops only when those concerns don't apply.
+        ExecuteUpdate/Delete bypass EF&apos;s change tracking pipeline — cascade deletes, interceptors, and domain events do not fire. Use raw SQL for bulk ops only when those concerns don&apos;t apply.
       </Callout>
     </div>
   );
@@ -636,7 +635,7 @@ function ConcurrencySection() {
         Optimistic concurrency — rowversion tokens
       </h3>
       <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-        EF supports optimistic concurrency via a concurrency token. On SaveChanges, EF adds a WHERE clause matching the token — if the row was updated by another actor, the token won't match, zero rows are updated, and EF throws <Code>DbUpdateConcurrencyException</Code>.
+        EF supports optimistic concurrency via a concurrency token. On SaveChanges, EF adds a WHERE clause matching the token — if the row was updated by another actor, the token won&apos;t match, zero rows are updated, and EF throws <Code>DbUpdateConcurrencyException</Code>.
       </p>
       <div className="rounded-lg bg-slate-800 dark:bg-slate-900 border border-slate-700 p-3 font-mono text-xs leading-relaxed overflow-x-auto">
         <div className="text-slate-500">{"// Entity with rowversion token"}</div>
@@ -694,7 +693,7 @@ function AdvancedAccordion({ open, setOpen }: { open: string | null; setOpen: (v
       accent: "emerald",
       content: (
         <div className="space-y-3">
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Owned entities let you map a value object (Address, Money, DateRange) to columns in the owner's table without a separate table or foreign key.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Owned entities let you map a value object (Address, Money, DateRange) to columns in the owner&apos;s table without a separate table or foreign key.</p>
           <div className="rounded-md bg-slate-800 dark:bg-slate-900 border border-slate-700 p-2 font-mono text-xs overflow-x-auto">
             <div className="text-emerald-400">{"public record Address(string Street, string City, string Zip);"}</div>
             <div className="text-slate-400">{""}</div>
@@ -716,7 +715,7 @@ function AdvancedAccordion({ open, setOpen }: { open: string | null; setOpen: (v
       accent: "blue",
       content: (
         <div className="space-y-3">
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Interceptors hook into EF's pipeline — before/after commands, before/after SaveChanges, connection events. Perfect for audit logging, soft-delete enforcement, and domain event dispatching.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Interceptors hook into EF&apos;s pipeline — before/after commands, before/after SaveChanges, connection events. Perfect for audit logging, soft-delete enforcement, and domain event dispatching.</p>
           <div className="rounded-md bg-slate-800 dark:bg-slate-900 border border-slate-700 p-2 font-mono text-xs overflow-x-auto">
             <div className="text-emerald-400">{"public class AuditInterceptor : SaveChangesInterceptor"}</div>
             <div className="text-slate-300">{"{"}</div>

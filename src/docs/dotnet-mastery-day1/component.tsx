@@ -18,7 +18,6 @@ import {
   GitBranch,
   Boxes,
   Recycle,
-  ListChecks,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 

@@ -2,20 +2,12 @@
 
 import { useState, useRef } from "react";
 import {
-  Lightbulb,
-  Package,
   BarChart3,
-  ArrowRight,
-  Zap,
   AlertTriangle,
   CheckCircle2,
-  Layers,
   Wrench,
   GitBranch,
-  Sparkles,
-  Network,
   Database,
-  Search,
   ListChecks,
   Scale,
 } from "lucide-react";

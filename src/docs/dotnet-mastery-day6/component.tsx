@@ -2,7 +2,6 @@
 
 import { useState, useRef } from "react";
 import {
-  Lightbulb,
   Package,
   BarChart3,
   ArrowRight,
@@ -11,7 +10,6 @@ import {
   CheckCircle2,
   Layers,
   Wrench,
-  GitBranch,
   Sparkles,
   Network,
   Database,
