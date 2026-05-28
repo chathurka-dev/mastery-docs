@@ -377,13 +377,11 @@ function CompareCard({
   const t = TONE[tone];
   return (
     <div className={cn("rounded-xl border-2 bg-white dark:bg-slate-900 p-4", t.border)}>
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Icon className={cn("h-4 w-4", t.text)} aria-hidden />
-          <h4 className={cn("text-sm font-bold", t.text)}>{title}</h4>
-        </div>
+      <div className="flex items-center justify-between gap-2 mb-1.5">
+        <Icon className={cn("h-4 w-4 shrink-0", t.text)} aria-hidden />
         {badge && <Chip tone={tone}>{badge}</Chip>}
       </div>
+      <h4 className={cn("text-sm font-bold leading-snug mb-3", t.text)}>{title}</h4>
       <dl className="space-y-2">
         {rows.map((r) => (
           <div key={r.label} className="flex flex-col gap-0.5">
@@ -644,7 +642,7 @@ function Day1() {
             badge=".NET 7+"
             rows={[
               { label: "Startup", value: "Tiny (~10 ms)" },
-              { label: "Steady state", value: "Good — no JIT can&apos;t re-optimize" },
+              { label: "Steady state", value: <>Good — no JIT, can&apos;t re-optimize</> },
               { label: "Best for", value: "CLIs, serverless, gRPC, sidecars" },
             ]}
           />
@@ -1097,7 +1095,7 @@ public class Handler([FromKeyedServices("email")] INotifier email) { ... }`} />
         <CodeBlock code={`builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));`} />
 
         <SubHeading accent={accent}>The three Options interfaces</SubHeading>
-        <div className="grid sm:grid-cols-3 gap-3 my-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 my-4">
           <CompareCard
             title="IOptions<T>"
             tone="violet"
@@ -1234,9 +1232,12 @@ app.UseMiddleware<TimingMiddleware>();`} />
           <Chip tone="violet">[FromServices]</Chip>
         </div>
         <P>Minimal APIs infer these from parameter types and route templates.</P>
+        <Callout tone="blue" icon={Lightbulb}>
+          In .NET 7+, you can implement <IC>{"IBindableFromHttpContext<T>"}</IC> to teach minimal APIs how to bind a custom type.
+        </Callout>
 
         <SubHeading accent={accent}>Validation</SubHeading>
-        <P>Built-in: DataAnnotations attributes. For complex rules, <strong className="text-slate-800 dark:text-slate-200">FluentValidation</strong> is the de-facto choice. .NET 8 introduced source-generated DataAnnotations validation for AOT.</P>
+        <P>Built-in: DataAnnotations attributes (<IC>{"[Required]"}</IC>, <IC>{"[StringLength]"}</IC>, etc.). For complex rules, <strong className="text-slate-800 dark:text-slate-200">FluentValidation</strong> is the de-facto choice — register validators in DI and wire them to a filter. .NET 8 introduced source-generated DataAnnotations validation for AOT.</P>
 
         <SubHeading accent={accent}>MVC filter pipeline</SubHeading>
         <ol className="flex flex-wrap items-center gap-2 my-3">
@@ -1247,7 +1248,16 @@ app.UseMiddleware<TimingMiddleware>();`} />
             </li>
           ))}
         </ol>
-        <P>Most of your filters should probably be middleware or endpoint filters.</P>
+        <div className="grid sm:grid-cols-2 gap-3 my-4">
+          <CompareCard title="Authorization filters" tone="rose" icon={Server} badge="first" rows={[{ label: "Runs", value: "First in the pipeline" }, { label: "Why", value: "Reject unauthorized requests before anything else" }]} />
+          <CompareCard title="Resource filters" tone="violet" icon={Boxes} badge="wraps binding" rows={[{ label: "Runs", value: "Around model binding" }, { label: "Why", value: "Used for caching" }]} />
+          <CompareCard title="Action filters" tone="blue" icon={Workflow} badge="around action" rows={[{ label: "Runs", value: "Before / after the action method" }, { label: "Why", value: "Cross-cutting per-action logic" }]} />
+          <CompareCard title="Exception filters" tone="amber" icon={AlertTriangle} badge="catch" rows={[{ label: "Runs", value: "When the action throws" }, { label: "Why", value: "Translate exceptions to results" }]} />
+          <CompareCard title="Result filters" tone="emerald" icon={CheckCircle2} badge="around result" rows={[{ label: "Runs", value: "Wraps result execution" }, { label: "Why", value: "Mutate the response before write" }]} />
+        </div>
+        <Callout tone="blue" icon={Lightbulb}>
+          Most of your filters should probably be middleware or endpoint filters. MVC filters are still right when you need MVC-aware features like <IC>ActionExecutingContext</IC>.
+        </Callout>
       </Section>
 
       {/* ── 2.7 ──────────────────────────────────────────────────────────── */}
@@ -1270,6 +1280,9 @@ app.UseMiddleware<TimingMiddleware>();`} />
             ClockSkew = TimeSpan.FromMinutes(1)
         };
     });`} />
+        <Callout tone="blue" icon={Lightbulb}>
+          For interactive apps, use OpenID Connect — <IC>Microsoft.Identity.Web</IC> for Entra ID / B2C is the canonical .NET integration.
+        </Callout>
 
         <SubHeading accent={accent}>Authorization = &quot;are you allowed?&quot;</SubHeading>
         <div className="grid sm:grid-cols-3 gap-3 my-4">
@@ -1309,6 +1322,9 @@ app.UseMiddleware<TimingMiddleware>();`} />
     options.AddPolicy("OverEighteen", p => p.RequireClaim("age", "18", "19", "20"));
 });
 [Authorize(Policy = "OverEighteen")]`} />
+        <Callout tone="emerald" icon={Sparkles} title=".NET 7+ shortcut">
+          Use the <IC>IAuthorizationBuilder</IC> extensions and <IC>AddPolicy(name, callback)</IC> with <IC>RequireAssertion(ctx =&gt; ...)</IC> for one-off checks — no need to define a full requirement + handler pair.
+        </Callout>
       </Section>
 
       <Pitfalls items={[
@@ -1427,7 +1443,32 @@ var users = db.Users.AsNoTrackingWithIdentityResolution().Include(u => u.Orders)
 
       {/* ── 3.3 ──────────────────────────────────────────────────────────── */}
       <Section num="3.3" kicker="Translation" title="Query translation pitfalls" icon={AlertTriangle} accent="emerald">
-        <P>EF translates <em>most</em> of LINQ to SQL — but not everything. EF 3.0+ throws for <IC>Where</IC> clauses that can&apos;t translate.</P>
+        <P>EF translates <em>most</em> of LINQ to SQL, but not everything. When it can&apos;t, you hit one of two failure modes:</P>
+        <div className="grid sm:grid-cols-2 gap-3 my-4">
+          <CompareCard
+            title="Client evaluation"
+            tone="rose"
+            icon={AlertTriangle}
+            badge="EF 3.0+ throws"
+            rows={[
+              { label: "What", value: "Older EF silently materialized + finished in memory" },
+              { label: "Now", value: <>EF 3.0+ throws for <IC>Where</IC>/predicates it can&apos;t translate</> },
+              { label: "Note", value: <><IC>Select</IC> projections can still mix server + client eval</> },
+            ]}
+          />
+          <CompareCard
+            title="Slow translation"
+            tone="amber"
+            icon={Gauge}
+            badge="runs, badly"
+            rows={[
+              { label: "What", value: "Generates SQL that runs but isn't ideal" },
+              { label: "Symptom", value: "Long-running queries, big plans, missed indexes" },
+              { label: "Fix", value: "Inspect with logging + EXPLAIN; rewrite the LINQ" },
+            ]}
+          />
+        </div>
+        <P>EF 3.0+ throws for <IC>Where</IC> clauses that can&apos;t translate. Common offenders:</P>
         <div className="grid sm:grid-cols-2 gap-3 my-4">
           <div className={cn("rounded-xl border p-4", TONE.rose.border, TONE.rose.bg)}>
             <div className="flex items-center gap-1.5 mb-2.5">
@@ -1483,6 +1524,9 @@ foreach (var o in orders)
         db.Users.AsNoTracking().FirstOrDefault(u => u.Id == id));
 
 var user = await GetUserById(db, 42);`} />
+        <Callout tone="blue" icon={Lightbulb}>
+          EF Core 8+ does <strong className="text-slate-800 dark:text-slate-200">query cache</strong> automatically for parameterized queries, but compiled queries still skip more overhead in tight loops.
+        </Callout>
 
         <SubHeading accent={accent}>Bulk operations (EF Core 7+)</SubHeading>
         <P><IC>ExecuteUpdate</IC> and <IC>ExecuteDelete</IC> — set/delete without materializing:</P>
@@ -1494,8 +1538,20 @@ await db.Users
     .Where(u => !u.IsActive)
     .ExecuteUpdateAsync(s => s.SetProperty(u => u.Archived, true));`} />
         <Callout tone="blue" icon={Lightbulb}>
-          These translate to a single <IC>DELETE</IC> / <IC>UPDATE</IC> statement. For really big bulk inserts, use <IC>SqlBulkCopy</IC> or <IC>EFCore.BulkExtensions</IC>.
+          These translate to a single <IC>DELETE</IC> / <IC>UPDATE</IC> statement. For inserts, EF Core uses MERGE / multi-VALUES batching automatically. For really big bulk inserts, use <IC>SqlBulkCopy</IC> or <IC>EFCore.BulkExtensions</IC>.
         </Callout>
+
+        <SubHeading accent={accent}><IC>AsNoTracking</IC> for reports</SubHeading>
+        <Callout tone="emerald" icon={CheckCircle2}>
+          For read-only queries — lists, reports, exports — always <IC>AsNoTracking</IC>. The change tracker is pure overhead when you have nothing to save back.
+        </Callout>
+
+        <SubHeading accent={accent}>Indexes &amp; query plans</SubHeading>
+        <P>EF won&apos;t write indexes for you. Use <IC>HasIndex</IC> in <IC>OnModelCreating</IC>, and check actual query plans periodically.</P>
+        <div className="grid sm:grid-cols-2 gap-3 my-4">
+          <CompareCard title="SQL Server" tone="blue" icon={Database} badge="diagnostic" rows={[{ label: "How", value: <><IC>SET STATISTICS IO</IC>, Activity Monitor, Query Store</> }]} />
+          <CompareCard title="Postgres" tone="emerald" icon={Database} badge="diagnostic" rows={[{ label: "How", value: <><IC>EXPLAIN ANALYZE</IC>, <IC>pg_stat_statements</IC></> }]} />
+        </div>
       </Section>
 
       {/* ── 3.6 ──────────────────────────────────────────────────────────── */}
@@ -1513,7 +1569,7 @@ await db.Users
           ]}
         />
         <Callout tone="amber" icon={Lightbulb} title="Backwards-compatible always">
-          Add columns nullable first, deploy code, then make non-null in a follow-up. Two-phase deploys save you.
+          Add columns nullable first, deploy code, then make non-null in a follow-up. <strong className="text-slate-800 dark:text-slate-200">Don&apos;t drop columns the running app still references</strong> — two-phase deploys save you.
         </Callout>
       </Section>
 
@@ -1555,7 +1611,7 @@ await tx.CommitAsync();`} />
           </table>
         </div>
         <Callout tone="emerald" icon={CheckCircle2}>
-          Many serious systems use <strong className="text-slate-800 dark:text-slate-200">both</strong> — EF Core for the write/command side, Dapper for read models.
+          Many serious systems use <strong className="text-slate-800 dark:text-slate-200">both</strong> — EF Core for the write/command side, Dapper for read models. EF Core&apos;s perf has closed the gap a lot since 6.0, especially with <IC>ExecuteUpdate</IC> and AOT-friendly query compilation.
         </Callout>
       </Section>
 
@@ -1637,6 +1693,10 @@ function Day4() {
 
       {/* ── 4.2 ──────────────────────────────────────────────────────────── */}
       <Section num="4.2" kicker="Pattern" title="CQRS and MediatR" icon={GitBranch} accent="amber">
+        <P><strong className="text-slate-800 dark:text-slate-200">CQRS</strong> = separate the <em>write</em> model from the <em>read</em> model. Commands change state; queries return data. They don&apos;t need to share types.</P>
+        <Callout tone="amber" icon={Lightbulb} title="When does CQRS pay off?">
+          When reads and writes have very different shapes (e.g., write to normalized tables, read from a denormalized view) or when you want to scale them independently. <strong className="text-slate-800 dark:text-slate-200">Overkill for symmetric CRUD.</strong>
+        </Callout>
         <div className="grid sm:grid-cols-2 gap-3 my-4">
           <CompareCard
             title="Commands"
@@ -1696,6 +1756,7 @@ var id = await mediator.Send(new CreateOrder(customerId, items));`} />
 
       {/* ── 4.3 ──────────────────────────────────────────────────────────── */}
       <Section num="4.3" kicker="Domain" title="DDD essentials — the parts that actually matter" icon={Boxes} accent="amber">
+        <P>You don&apos;t need to memorize the blue book. Here&apos;s the 80/20.</P>
         <SubHeading accent={accent}>The 80/20</SubHeading>
         <div className="grid sm:grid-cols-2 gap-3 my-4">
           <CompareCard
@@ -1987,7 +2048,8 @@ function Day5() {
           <><IC>required</IC> members.</>,
           <>Raw string literals.</>,
           <>Generic math (<IC>static abstract</IC> interface members) — first time C# generics could do <IC>T.MaxValue</IC>, <IC>+</IC>, etc.</>,
-          <>File-scoped types. List patterns.</>,
+          <>File-scoped types.</>,
+          <>List patterns (<IC>{"is [1, 2, .., 5]"}</IC>).</>,
         ]} />
         <Callout tone="amber" icon={Lightbulb}>
           Native AOT shipped as production-ready for console apps and certain ASP.NET workloads (still limited; better in 8 and 9).
@@ -2012,6 +2074,7 @@ function Day5() {
           <><strong className="text-slate-800 dark:text-slate-200">Keyed services</strong> in DI (see Day 2).</>,
           <><strong className="text-slate-800 dark:text-slate-200">Identity API endpoints</strong> — <IC>{"MapIdentityApi<TUser>()"}</IC> gives you registration/login/refresh endpoints with one line.</>,
           <><strong className="text-slate-800 dark:text-slate-200">Request Delegate Generator (RDG)</strong> — source-generates minimal API binding code, making it AOT-safe.</>,
+          <>Form binding in minimal APIs.</>,
           <><IC>IExceptionHandler</IC> interface — register exception handlers in DI instead of writing exception middleware by hand.</>,
           <>HTTP/3 generally available.</>,
           <><IC>TimeProvider</IC> abstraction — replaces <IC>DateTime.UtcNow</IC> for testable time.</>,
@@ -2036,6 +2099,10 @@ List<int> y = [1, 2, 3];
 int[] z = [..a, ..b];`} />
         <P>Optional parameters in lambdas: <IC>{"Func<int, int> f = (x = 0) => x;"}</IC></P>
         <P>Type aliases for any type: <IC>{"using Point = (int X, int Y);"}</IC></P>
+        <P><IC>ref readonly</IC> parameters and <strong className="text-slate-800 dark:text-slate-200">inline arrays</strong>.</P>
+        <Callout tone="rose" icon={Sparkles}>
+          <IC>Microsoft.Extensions.AI</IC> — first preview, but matured in 9.
+        </Callout>
       </Section>
 
       {/* ── 5.3 ──────────────────────────────────────────────────────────── */}
@@ -2049,9 +2116,17 @@ int[] z = [..a, ..b];`} />
 
         <SubHeading accent={accent}>ASP.NET Core</SubHeading>
         <UL items={[
-          <><strong className="text-slate-800 dark:text-slate-200"><IC>Microsoft.AspNetCore.OpenApi</IC></strong> — built-in OpenAPI document generation (replaces adding Swashbuckle just for that).</>,
+          <><strong className="text-slate-800 dark:text-slate-200"><IC>Microsoft.AspNetCore.OpenApi</IC></strong> — built-in OpenAPI document generation (replaces adding Swashbuckle just for that). Swashbuckle is still around for the UI.</>,
           <>Built-in support for <strong className="text-slate-800 dark:text-slate-200">hybrid caching</strong> (<IC>Microsoft.Extensions.Caching.Hybrid</IC>) — L1 memory + L2 distributed in one API.</>,
           <>More AOT-friendly bits.</>,
+          <>Better static files perf.</>,
+        ]} />
+
+        <SubHeading accent={accent}>EF Core 9</SubHeading>
+        <UL items={[
+          <>Better JSON support.</>,
+          <>Improved AOT support and precompiled queries.</>,
+          <><IC>HasIndex</IC> for complex types.</>,
         ]} />
 
         <SubHeading accent={accent}>C# 13</SubHeading>
@@ -2078,6 +2153,19 @@ int[] z = [..a, ..b];`} />
           <>ARM64 perf improvements.</>,
         ]} />
 
+        <SubHeading accent={accent}>ASP.NET Core</SubHeading>
+        <UL items={[
+          <>More Minimal API enhancements: validation source generators, better OpenAPI defaults.</>,
+          <>Better Native AOT story for full ASP.NET Core (not just minimal APIs).</>,
+          <>Improvements in <IC>Microsoft.AspNetCore.OpenApi</IC>.</>,
+        ]} />
+
+        <SubHeading accent={accent}>EF Core 10</SubHeading>
+        <UL items={[
+          <>More compiled-model and AOT improvements.</>,
+          <>Continued JSON / vector data type work — this matters for AI (see Day 6).</>,
+        ]} />
+
         <SubHeading accent={accent}>C# 14</SubHeading>
         <P><strong className="text-slate-800 dark:text-slate-200"><IC>field</IC> keyword</strong> stable — write property logic without backing-field boilerplate:</P>
         <CodeBlock code={`public string Name
@@ -2088,6 +2176,9 @@ int[] z = [..a, ..b];`} />
         <P><strong className="text-slate-800 dark:text-slate-200">Extension members</strong> — extension <em>properties</em> and <em>static</em> extensions, not just methods.</P>
         <P><strong className="text-slate-800 dark:text-slate-200">Null-conditional assignment</strong> — <IC>{"customer?.Name = \"x\""}</IC>.</P>
         <P>Partial constructors and events.</P>
+        <Callout tone="rose" icon={Sparkles}>
+          <IC>Microsoft.Extensions.AI</IC>: production-grade, <IC>IChatClient</IC>-based, with <IC>Microsoft.Extensions.AI.Evaluation</IC> (Day 7).
+        </Callout>
       </Section>
 
       {/* ── 5.5 ──────────────────────────────────────────────────────────── */}
@@ -2101,11 +2192,11 @@ int[] z = [..a, ..b];`} />
         />
         <SubHeading accent={accent}>Key steps regardless of target</SubHeading>
         <UL items={[
-          <>Update <IC>{"<TargetFramework>"}</IC>.</>,
+          <>Update <IC>{"<TargetFramework>net8.0</TargetFramework>"}</IC> (then <IC>net10.0</IC>).</>,
           <>Update <IC>Microsoft.AspNetCore.*</IC> and <IC>Microsoft.EntityFrameworkCore.*</IC> to matching majors.</>,
-          <>Run <IC>dotnet outdated</IC>.</>,
-          <>Re-test serialization and EF queries.</>,
-          <>Turn on Nullable and enable analyzers.</>,
+          <>Run the <IC>dotnet outdated</IC> tool, or use NuGet&apos;s &quot;consolidate&quot; view in the IDE.</>,
+          <>Re-test: serialization, EF queries that used to evaluate client-side, any reflection-heavy code.</>,
+          <>Turn on Nullable, run analyzers, enable <IC>{"<TreatWarningsAsErrors>true</TreatWarningsAsErrors>"}</IC> for new warnings only.</>,
         ]} />
       </Section>
 
@@ -2314,7 +2405,11 @@ var answer = await chatClient.GetResponseAsync([new ChatMessage(ChatRole.User, p
           <CompareCard title="Postgres + pgvector" tone="emerald" icon={Database} badge="open" rows={[{ label: "What", value: "Great open option. Npgsql + EF Core 9/10 support." }]} />
           <CompareCard title="Azure AI Search" tone="violet" icon={Server} badge="managed" rows={[{ label: "What", value: "Managed, hybrid (vector + keyword) search." }]} />
           <CompareCard title="Qdrant / Milvus / Weaviate" tone="amber" icon={Boxes} badge="dedicated" rows={[{ label: "What", value: "Dedicated vector DBs, all have .NET clients." }]} />
+          <CompareCard title="In-memory" tone="rose" icon={Cpu} badge="prototyping" rows={[{ label: "What", value: <><IC>Microsoft.SemanticKernel.Memory</IC> has providers — for prototypes and tests.</> }]} />
         </div>
+        <Callout tone="blue" icon={Lightbulb}>
+          <IC>Microsoft.Extensions.VectorData</IC> (preview through 9, GA in 10 trajectory) is a vector-store abstraction analogous to <IC>Microsoft.Extensions.AI</IC> — same swap-providers idea.
+        </Callout>
       </Section>
 
       {/* ── 6.7 ──────────────────────────────────────────────────────────── */}
@@ -2548,6 +2643,9 @@ foreach (var test in goldenSet)
     foreach (var metric in result.Metrics.Values)
         Console.WriteLine($"{metric.Name}: {metric.Interpretation?.Rating} — {metric.Reason}");
 }`} />
+        <Callout tone="amber" icon={AlertTriangle} title="API surface evolves">
+          The shape above reflects the GA direction. The library&apos;s surface evolves between previews — always consult the <IC>Microsoft.Extensions.AI.Evaluation</IC> docs for the version pinned in your <IC>.csproj</IC>.
+        </Callout>
         <Callout tone="emerald" icon={CheckCircle2}>
           The library has reporting helpers that emit HTML reports you can publish from CI.
         </Callout>

@@ -76,16 +76,16 @@ Use ONLY these sizes. Pick by role, not by feel.
 
 ### Accent palette
 
-Six accent colors, all routed through `accentMap`. Pick by **semantic role**, never randomly.
+Six accent colors, all routed through `accentMap`.
 
 | Accent | When to use |
 |--------|-------------|
-| `violet` | Primary CTAs, top-of-stack / boot / entry points, "the orchestrator." |
-| `rose` | Engines, critical paths, performance hotspots, "the heart." |
-| `emerald` | Success states, AOT-safe, pre-compiled, "the good outcome." |
-| `blue` | User-facing surfaces, source code, libraries, "what you touch." |
-| `amber` | Warnings, JIT spikes, slow paths, "be careful." |
-| `cyan` | Hardware / low-level / "raw" things (machine code, CPUs). |
+| `violet` | Primary CTAs, entry points, top-level orchestration |
+| `rose` | Errors, critical paths, performance hotspots |
+| `emerald` | Success states, good outcomes, safe paths |
+| `blue` | User-facing surfaces, source code, libraries |
+| `amber` | Warnings, slow paths, caution |
+| `cyan` | Hardware, low-level, raw system things |
 
 Each accent always uses the same five Tailwind classes from `accentMap`:
 
@@ -204,30 +204,6 @@ Never use raw `<code>`. The helper enforces border, padding, monospace, and dark
 
 Use `pl-4` for one level of indent, `pl-8` for two.
 
-**Tabular output** (anything that looks like a results table, ASCII columns, etc.) — use a real `<table>`, not a `<pre>`. Browsers collapse multi-space gaps inside inline elements even when wrapped in `<pre>`, so column alignment via spaces is unreliable. A table guarantees alignment via column cells while still looking like terminal output:
-
-```tsx
-<div className="rounded-lg bg-slate-800 dark:bg-slate-900 border border-slate-700 p-3 font-mono text-xs overflow-x-auto">
-  <div className="text-slate-500 mb-2">// BenchmarkDotNet output</div>
-  <table className="w-full border-collapse">
-    <thead>
-      <tr className="border-b border-slate-700">
-        <th className="text-left  text-slate-400 font-semibold py-1.5 pr-6">Method</th>
-        <th className="text-right text-slate-400 font-semibold py-1.5 px-3">Mean</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td className="text-emerald-400 py-1.5 pr-6">Foo</td>
-        <td className="text-right text-amber-300 py-1.5 px-3">12 ns</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-```
-
-Reserve `<pre>` for single-color blocks (commands, short snippets) where alignment is just left-justified.
-
 ### 4.6 Chips / badges
 
 Three variants, by purpose:
@@ -251,26 +227,7 @@ Three variants, by purpose:
 
 All chips get accent color from `accentMap[accent]` — three classes: `chipBg`, `text`, `border`.
 
-### 4.7 Flow diagrams (horizontal pipelines)
-
-A flex row of chips separated by `<ArrowRight>`:
-
-```tsx
-<ol className="flex flex-wrap items-center gap-2 text-sm">
-  {steps.map((s, i, arr) => (
-    <li key={s.label} className="flex items-center gap-2">
-      <span className={cn("px-2.5 py-1 rounded-md text-xs font-semibold border", a.chipBg, a.text, a.border)}>
-        {s.label}
-      </span>
-      {i < arr.length - 1 && <ArrowRight className="h-3.5 w-3.5 text-slate-400" aria-hidden />}
-    </li>
-  ))}
-</ol>
-```
-
-Arrows are always `h-3.5 w-3.5 text-slate-400`. Wrap with `flex-wrap` so they stack on mobile.
-
-### 4.8 Tables (or table-like lists)
+### 4.7 Tables (or table-like lists)
 
 Two acceptable styles:
 
@@ -302,36 +259,7 @@ Two acceptable styles:
 </ul>
 ```
 
-### 4.9 Pros / Cons two-column
-
-```tsx
-<div className="grid sm:grid-cols-2 gap-4">
-  <div>
-    <h4 className="text-sm font-bold text-emerald-700 dark:text-emerald-400 mb-2">✓ Pros</h4>
-    <ul className="space-y-1.5">
-      {items.map(p => (
-        <li key={p} className="text-sm text-slate-700 dark:text-slate-300 pl-3 border-l-2 border-emerald-300 dark:border-emerald-700">
-          {p}
-        </li>
-      ))}
-    </ul>
-  </div>
-  <div>
-    <h4 className="text-sm font-bold text-rose-700 dark:text-rose-400 mb-2">⚠ Cons</h4>
-    <ul className="space-y-1.5">
-      {items.map(c => (
-        <li key={c} className="text-sm text-slate-700 dark:text-slate-300 pl-3 border-l-2 border-rose-300 dark:border-rose-700">
-          {c}
-        </li>
-      ))}
-    </ul>
-  </div>
-</div>
-```
-
-Always emerald for pros, rose for cons. Always `pl-3 border-l-2` accent left bar.
-
-### 4.10 Accordion / collapsible
+### 4.8 Accordion / collapsible
 
 For "click to expand" sections. Required ARIA: `aria-expanded`, `aria-controls`, focus ring.
 
@@ -383,28 +311,7 @@ Every doc must satisfy ALL of these — no exceptions.
 
 ---
 
-## 7. Spacing scale
-
-Stick to this scale. No `gap-1.5`-on-monday, `gap-3.5`-on-tuesday.
-
-| Token | Use for |
-|-------|---------|
-| `gap-1` | Single-line chip rows inside a sentence. |
-| `gap-1.5` | Flow-diagram chips (with arrows). |
-| `gap-2` | Default chip rows, list items inside small cards. |
-| `gap-3` | List items inside outer cards. |
-| `gap-4` | Two-column grids, separate sub-sections. |
-| `space-y-2` | Tight list of related items. |
-| `space-y-3` | Default list spacing. |
-| `space-y-4` | Sub-sections inside a card. |
-| `space-y-5` | Sub-sections inside a colored section card. |
-| `space-y-6` | Top-level blocks inside a tab. |
-
-`mb-2` / `mb-3` / `mb-4` between heading and content. `mb-8` only on the doc header.
-
----
-
-## 8. Icons
+## 7. Icons
 
 - Library: `lucide-react`. Don't introduce a second icon set.
 - Sizing: `h-3.5 w-3.5` (inline arrows), `h-4 w-4` (heading icons), `h-5 w-5` (callout icons).
@@ -413,7 +320,7 @@ Stick to this scale. No `gap-1.5`-on-monday, `gap-3.5`-on-tuesday.
 
 ---
 
-## 9. What to AVOID
+## 8. What to AVOID
 
 These have all been tried and they all look wrong. Don't repeat.
 
@@ -430,7 +337,7 @@ These have all been tried and they all look wrong. Don't repeat.
 
 ---
 
-## 10. Checklist before shipping a new doc
+## 9. Checklist before shipping a new doc
 
 Run through these manually before committing.
 
